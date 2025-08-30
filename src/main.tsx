@@ -7,15 +7,15 @@ import App from "./App.tsx";
 const initializeTheme = () => {
   const savedTheme = localStorage.getItem("theme");
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  
+
   let shouldBeDark = false;
-  
+
   if (savedTheme) {
     shouldBeDark = savedTheme === "dark";
   } else {
     shouldBeDark = prefersDark;
   }
-  
+
   if (shouldBeDark) {
     document.documentElement.classList.add("dark");
   } else {

@@ -14,18 +14,20 @@ export function SiteHeader({ title = "Dashboard" }: SiteHeaderProps) {
   useEffect(() => {
     // Check for saved theme preference or default to light mode
     const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
     let shouldBeDark = false;
-    
+
     if (savedTheme) {
       shouldBeDark = savedTheme === "dark";
     } else {
       shouldBeDark = prefersDark;
     }
-    
+
     setIsDark(shouldBeDark);
-    
+
     if (shouldBeDark) {
       document.documentElement.classList.add("dark");
     } else {

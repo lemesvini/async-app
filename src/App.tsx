@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
-import { AlunosPage } from "./pages/AlunosPage";
+import { StudentsPage } from "./pages/StudentsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import "./App.css";
 
@@ -24,7 +24,7 @@ function App() {
           path="/alunos"
           element={
             <ProtectedRoute>
-              <AlunosPage />
+              <StudentsPage />
             </ProtectedRoute>
           }
         />

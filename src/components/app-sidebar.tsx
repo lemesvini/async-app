@@ -31,7 +31,7 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Alunos",
+      title: "Students",
       url: "/alunos",
       icon: IconUsers,
     },
