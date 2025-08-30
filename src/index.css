@@ -36,7 +36,7 @@
   --sidebar-accent-foreground: oklch(0.3051 0.0055 91.5582);
   --sidebar-border: oklch(0.8844 0.0165 95.2456);
   --sidebar-ring: oklch(0.3051 0.0055 91.5582);
-  --font-sans: Inter;
+  --font-sans: serif;
   --font-serif: serif;
   --font-mono: monospace;
   --radius: 0.5rem;
@@ -90,7 +90,7 @@
   --sidebar-accent-foreground: oklch(0.9655 0.0119 101.4816);
   --sidebar-border: oklch(0.405 0.0067 95.2226);
   --sidebar-ring: oklch(0.9655 0.0119 101.4816);
-  --font-sans: Inter;
+  --font-sans: serif;
   --font-serif: serif;
   --font-mono: monospace;
   --radius: 0.5rem;

@@ -1,5 +1,9 @@
 import * as React from "react";
-import { IconDashboard, IconInnerShadowTop } from "@tabler/icons-react";
+import {
+  IconDashboard,
+  IconInnerShadowTop,
+  IconUsers,
+} from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 import { NavMain } from "@/components/nav-main";
@@ -25,6 +29,11 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: IconDashboard,
+    },
+    {
+      title: "Alunos",
+      url: "/alunos",
+      icon: IconUsers,
     },
   ],
   // navClouds: [
@@ -142,7 +151,6 @@ export function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <hr className="my-2" />
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavDocuments items={data.documents} /> */}
