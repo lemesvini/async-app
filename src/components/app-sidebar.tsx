@@ -3,6 +3,8 @@ import {
   IconDashboard,
   IconInnerShadowTop,
   IconUsers,
+  IconBriefcase,
+  IconSchool,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -34,6 +36,16 @@ const data = {
       title: "Students",
       url: "/alunos",
       icon: IconUsers,
+    },
+    {
+      title: "Consultants",
+      url: "/consultants",
+      icon: IconBriefcase,
+    },
+    {
+      title: "Turmas",
+      url: "/turmas",
+      icon: IconSchool,
     },
   ],
   // navClouds: [
