@@ -60,7 +60,7 @@ interface CreateTurmaInput {
   startTime: string;
   endTime: string;
   dayOfWeek: number;
-  consultantId: string;
+  consultantId?: string;
 }
 
 interface UpdateTurmaInput extends Partial<CreateTurmaInput> {}

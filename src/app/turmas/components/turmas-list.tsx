@@ -77,6 +77,7 @@ import {
 } from "@/components/ui/table";
 import { type Turma } from "../api/get-turmas";
 import { ClassDetailsDialog } from "./class-details-dialog";
+import { CreateClassDialog } from "./create-class-dialog";
 
 // Helper function to get day name
 const getDayName = (dayOfWeek: number): string => {
@@ -335,6 +336,7 @@ export function TurmasList({
   const [data, setData] = React.useState(() => initialData);
   const [selectedTurma, setSelectedTurma] = React.useState<Turma | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -501,7 +503,11 @@ export function TurmasList({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCreateDialogOpen(true)}
+          >
             <IconPlus />
             <span className="hidden lg:inline">Add Class</span>
           </Button>
@@ -644,6 +650,12 @@ export function TurmasList({
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onEnrollmentSuccess={onDataChange}
+      />
+
+      <CreateClassDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={onDataChange}
       />
     </div>
   );
