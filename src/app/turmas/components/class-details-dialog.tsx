@@ -19,6 +19,7 @@ import {
   IconUser,
   IconUserPlus,
   IconSearch,
+  IconBook,
 } from "@tabler/icons-react";
 import {
   Popover,
@@ -35,6 +36,8 @@ import {
   unenrollStudentFromTurma,
 } from "../api/get-turmas";
 import useDebounce from "@/hooks/use-debounce";
+import { AttachLessonDialog } from "./attach-lesson-dialog";
+import { LessonsList } from "./lessons-list";
 
 interface ClassDetailsDialogProps {
   turma: Turma | null;
@@ -89,6 +92,8 @@ export function ClassDetailsDialog({
     enrollmentId: string;
   } | null>(null);
   const [isUnenrolling, setIsUnenrolling] = useState(false);
+  const [showAttachLessonDialog, setShowAttachLessonDialog] = useState(false);
+  const [lessonsKey, setLessonsKey] = useState(0); // For forcing lessons refresh
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -252,6 +257,10 @@ export function ClassDetailsDialog({
   const handleCancelUnenroll = () => {
     setShowUnenrollConfirm(false);
     setStudentToUnenroll(null);
+  };
+
+  const handleLessonSuccess = () => {
+    setLessonsKey((prev) => prev + 1); // Force lessons refresh
   };
 
   if (!turma) return null;
@@ -517,6 +526,33 @@ export function ClassDetailsDialog({
 
             <Separator />
 
+            {/* Lessons Section */}
+            <div className="grid gap-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium flex items-center gap-2">
+                  <IconBook className="h-4 w-4" />
+                  Lessons
+                </h4>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAttachLessonDialog(true)}
+                  className="gap-1"
+                >
+                  <IconBook className="h-3 w-3" />
+                  Attach Lesson
+                </Button>
+              </div>
+
+              <LessonsList
+                key={lessonsKey}
+                turma={turma}
+                onLessonChange={handleLessonSuccess}
+              />
+            </div>
+
+            <Separator />
+
             {/* Additional Information */}
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -537,6 +573,14 @@ export function ClassDetailsDialog({
         </DialogFooter> */}
         </DialogContent>
       </Dialog>
+
+      {/* Attach Lesson Dialog */}
+      <AttachLessonDialog
+        turma={turma}
+        open={showAttachLessonDialog}
+        onOpenChange={setShowAttachLessonDialog}
+        onSuccess={handleLessonSuccess}
+      />
 
       {/* Unenroll Confirmation Dialog */}
       <Dialog open={showUnenrollConfirm} onOpenChange={setShowUnenrollConfirm}>
