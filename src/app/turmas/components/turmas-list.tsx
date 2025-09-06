@@ -78,6 +78,7 @@ import {
 import { type Turma } from "../api/get-turmas";
 import { ClassDetailsDialog } from "./class-details-dialog";
 import { CreateClassDialog } from "./create-class-dialog";
+import { DeleteClassDialog } from "./delete-class-dialog";
 
 // Helper function to get day name
 const getDayName = (dayOfWeek: number): string => {
@@ -122,6 +123,7 @@ function DragHandle({ id }: { id: string }) {
 // Extended type for table data with action handlers
 type TurmaWithActions = Turma & {
   onViewDetails: () => void;
+  onDelete: () => void;
 };
 
 const columns: ColumnDef<TurmaWithActions>[] = [
@@ -287,10 +289,13 @@ const columns: ColumnDef<TurmaWithActions>[] = [
             View Details
           </DropdownMenuItem>
           <DropdownMenuItem>Edit Class</DropdownMenuItem>
-          <DropdownMenuItem>Manage Students</DropdownMenuItem>
-          <DropdownMenuItem>View Schedule</DropdownMenuItem>
+          {/* <DropdownMenuItem>Manage Students</DropdownMenuItem> */}
+          {/* <DropdownMenuItem>View Schedule</DropdownMenuItem> */}
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
+          <DropdownMenuItem
+            variant="destructive"
+            onSelect={() => row.original.onDelete?.()}
+          >
             Delete Class
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -337,6 +342,8 @@ export function TurmasList({
   const [selectedTurma, setSelectedTurma] = React.useState<Turma | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [turmaToDelete, setTurmaToDelete] = React.useState<Turma | null>(null);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -357,6 +364,10 @@ export function TurmasList({
         onViewDetails: () => {
           setSelectedTurma(turma);
           setDialogOpen(true);
+        },
+        onDelete: () => {
+          setTurmaToDelete(turma);
+          setDeleteDialogOpen(true);
         },
       })),
     [data]
@@ -656,6 +667,16 @@ export function TurmasList({
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
         onSuccess={onDataChange}
+      />
+
+      <DeleteClassDialog
+        turma={turmaToDelete}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onSuccess={() => {
+          onDataChange?.();
+          setTurmaToDelete(null);
+        }}
       />
     </div>
   );

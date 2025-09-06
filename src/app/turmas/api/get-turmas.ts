@@ -189,7 +189,9 @@ export async function deleteTurma(id: string): Promise<{ message: string }> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/classes/${id}`, {
       method: "DELETE",
-      headers: getAuthHeaders(),
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
       credentials: "include",
     });
 
