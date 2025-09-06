@@ -166,11 +166,21 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foregroundß"
             >
               <Link to="/dashboard">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Async.</span>
+                <span className="text-base font-semibold tracking-wid">
+                  Welcome,{" "}
+                  {(() => {
+                    const displayName =
+                      "fullName" in userData
+                        ? userData.fullName || userData.name
+                        : userData.name;
+                    return displayName.split(" ")[0];
+                  })()}
+                  {" :)"}
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
