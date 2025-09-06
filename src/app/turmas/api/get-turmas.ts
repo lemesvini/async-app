@@ -253,7 +253,9 @@ export async function unenrollStudentFromTurma(
       `${API_BASE_URL}/api/classes/${classId}/students/${studentId}`,
       {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
         credentials: "include",
       }
     );
