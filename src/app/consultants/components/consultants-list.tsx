@@ -45,7 +45,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -74,6 +74,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Consultant } from "@/app/consultants/api/get-consultants";
+import { CreateConsultantDialog } from "./create-consultant-dialog";
+import { DeleteConsultantDialog } from "./delete-consultant-dialog";
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -94,114 +96,6 @@ function DragHandle({ id }: { id: string }) {
     </Button>
   );
 }
-
-const columns: ColumnDef<Consultant>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "fullName",
-    header: "Full Name",
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.original.fullName}</div>;
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.original.email}</div>
-    ),
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.original.phone || "N/A"}</div>
-    ),
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.role}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Joined",
-    cell: ({ row }) => {
-      const date = new Date(row.original.createdAt);
-      return (
-        <div className="text-muted-foreground">{date.toLocaleDateString()}</div>
-      );
-    },
-  },
-  {
-    accessorKey: "notes",
-    header: "Notes",
-    cell: ({ row }) => (
-      <div className="max-w-32 truncate text-muted-foreground">
-        {row.original.notes || "No notes"}
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>View Details</DropdownMenuItem>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Contact</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Remove</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
 
 function DraggableRow({ row }: { row: Row<Consultant> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -241,7 +135,139 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [consultantToDelete, setConsultantToDelete] =
+    React.useState<Consultant | null>(null);
   const sortableId = React.useId();
+
+  const handleDeleteConsultant = (consultant: Consultant) => {
+    setConsultantToDelete(consultant);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const columns: ColumnDef<Consultant>[] = React.useMemo(
+    () => [
+      {
+        id: "drag",
+        header: () => null,
+        cell: ({ row }) => <DragHandle id={row.original.id} />,
+      },
+      {
+        id: "select",
+        header: ({ table }) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+              aria-label="Select all"
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          </div>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorKey: "fullName",
+        header: "Full Name",
+        cell: ({ row }) => {
+          return <div className="font-medium">{row.original.fullName}</div>;
+        },
+        enableHiding: false,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className="text-muted-foreground">{row.original.email}</div>
+        ),
+      },
+      // {
+      //   accessorKey: "phone",
+      //   header: "Phone",
+      //   cell: ({ row }) => (
+      //     <div className="text-muted-foreground">
+      //       {row.original.phone || "N/A"}
+      //     </div>
+      //   ),
+      // },
+      // {
+      //   accessorKey: "role",
+      //   header: "Role",
+      //   cell: ({ row }) => (
+      //     <Badge variant="outline" className="text-muted-foreground px-1.5">
+      //       {row.original.role}
+      //     </Badge>
+      //   ),
+      // },
+      {
+        accessorKey: "createdAt",
+        header: "Joined",
+        cell: ({ row }) => {
+          const date = new Date(row.original.createdAt);
+          return (
+            <div className="text-muted-foreground">
+              {date.toLocaleDateString()}
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "notes",
+        header: "Notes",
+        cell: ({ row }) => (
+          <div className="max-w-32 truncate text-muted-foreground">
+            {row.original.notes || "No notes"}
+          </div>
+        ),
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                size="icon"
+              >
+                <IconDotsVertical />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem>View Details</DropdownMenuItem>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Contact</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => handleDeleteConsultant(row.original)}
+              >
+                Remove
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ],
+    []
+  );
+
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
@@ -288,6 +314,18 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
       });
     }
   }
+
+  const handleConsultantCreated = () => {
+    // Trigger a refresh of the consultants data
+    // This could be done by calling a refresh function passed from the parent
+    // or by refetching the data directly
+    window.location.reload(); // Simple solution for now
+  };
+
+  const handleConsultantDeleted = () => {
+    // Trigger a refresh of the consultants data
+    window.location.reload(); // Simple solution for now
+  };
 
   return (
     <div className="w-full flex-col justify-start gap-6">
@@ -338,7 +376,11 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
             <IconPlus />
             <span className="hidden lg:inline">Add Consultant</span>
           </Button>
@@ -475,6 +517,19 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
           </div>
         </div>
       </div>
+
+      <CreateConsultantDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onSuccess={handleConsultantCreated}
+      />
+
+      <DeleteConsultantDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        consultant={consultantToDelete}
+        onSuccess={handleConsultantDeleted}
+      />
     </div>
   );
 }

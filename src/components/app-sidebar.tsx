@@ -7,7 +7,7 @@ import {
   IconSchool,
   IconBook,
 } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -158,6 +158,7 @@ export function AppSidebar({
 }) {
   // Use passed user or fallback to default data
   const userData = user || data.user;
+  const location = useLocation();
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -195,7 +196,10 @@ export function AppSidebar({
             <SidebarMenu>
               {data.navManagement.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.url}
+                  >
                     <Link to={item.url}>
                       {item.icon && <item.icon />}
                       <span className="text-lg">{item.title}</span>
