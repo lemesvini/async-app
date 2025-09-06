@@ -116,14 +116,6 @@ export function ClassDetailsDialog({
 
   const selectedStudent = students.find((s) => s.id === selectedStudentId);
 
-  console.log("Debug info:", {
-    studentsLoaded: students.length,
-    enrolledStudentIds,
-    availableStudents: availableStudents.length,
-    selectedStudentId,
-    selectedStudent,
-  });
-
   const loadStudents = async () => {
     try {
       setLoadingStudents(true);
@@ -444,10 +436,6 @@ export function ClassDetailsDialog({
                                           "bg-muted"
                                       )}
                                       onClick={() => {
-                                        console.log(
-                                          "Selecting student:",
-                                          student
-                                        );
                                         setSelectedStudentId(student.id);
                                         setIsStudentSelectorOpen(false);
                                       }}

@@ -8,22 +8,20 @@ export function ContentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchContents = async () => {
-      try {
-        setLoading(true);
-        const response = await getContents(1, 100); // Get first 100 contents
-        setContents(response.contents);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch contents"
-        );
-        console.error("Error fetching contents:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchContents = async () => {
+    try {
+      setLoading(true);
+      const response = await getContents(1, 100); // Get first 100 contents
+      setContents(response.contents);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch contents");
+      console.error("Error fetching contents:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchContents();
   }, []);
 
@@ -59,7 +57,7 @@ export function ContentsPage() {
     <DashboardLayout title="Contents">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
-          <ContentsList data={contents} />
+          <ContentsList data={contents} onRefresh={fetchContents} />
         </div>
       </div>
     </DashboardLayout>

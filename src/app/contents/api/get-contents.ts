@@ -88,4 +88,81 @@ export async function getContentsByModule(module: string): Promise<Content[]> {
   }
 }
 
-export type { Content, ContentsResponse };
+interface CreateContentInput {
+  title: string;
+  description?: string;
+  module: string;
+  order: number;
+  presentationUrl?: string;
+  studentsPdfUrl?: string;
+  homeworkUrl?: string;
+  isActive?: boolean;
+}
+
+export async function createContent(
+  input: CreateContentInput
+): Promise<Content> {
+  try {
+    const requestBody = JSON.stringify(input);
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/contents`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        credentials: "include",
+        body: requestBody,
+      }
+    );
+
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+      console.error("API Error:", errorData);
+      throw new Error(errorData.error || "Failed to create content");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating content:", error);
+    throw error;
+  }
+}
+
+export async function deleteContent(id: string): Promise<{ message: string }> {
+  try {
+    const response = await fetch(
+      `${
+        import.meta.env.VITE_API_URL || "http://localhost:3000"
+      }/api/contents/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to delete content");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting content:", error);
+    throw error;
+  }
+}
+
+export type { Content, ContentsResponse, CreateContentInput };

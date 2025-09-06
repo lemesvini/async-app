@@ -83,6 +83,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Content } from "@/app/contents/api/get-contents";
+import { AddContentDialog } from "./add-content-dialog";
+import { DeleteContentDialog } from "./delete-content-dialog";
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -107,7 +109,7 @@ function DragHandle({ id }: { id: string }) {
 // Helper component for resource links
 function ResourceLinks({ content }: { content: Content }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-3">
       {content.presentationUrl && (
         <TooltipProvider>
           <Tooltip>
@@ -118,7 +120,7 @@ function ResourceLinks({ content }: { content: Content }) {
                 className="size-6"
                 onClick={() => window.open(content.presentationUrl!, "_blank")}
               >
-                <IconPresentation className="size-3" />
+                <IconPresentation className="size-4 " />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -137,7 +139,7 @@ function ResourceLinks({ content }: { content: Content }) {
                 className="size-6"
                 onClick={() => window.open(content.studentsPdfUrl!, "_blank")}
               >
-                <IconFileText className="size-3" />
+                <IconFileText className="size-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -156,7 +158,7 @@ function ResourceLinks({ content }: { content: Content }) {
                 className="size-6"
                 onClick={() => window.open(content.homeworkUrl!, "_blank")}
               >
-                <IconBook className="size-3" />
+                <IconBook className="size-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -249,62 +251,71 @@ const columns: ColumnDef<Content>[] = [
     header: "Resources",
     cell: ({ row }) => <ResourceLinks content={row.original} />,
   },
-  {
-    accessorKey: "isActive",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? "default" : "secondary"}>
-        {row.original.isActive ? "Active" : "Inactive"}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created",
-    cell: ({ row }) => {
-      const date = new Date(row.original.createdAt);
-      return (
-        <div className="text-muted-foreground">{date.toLocaleDateString()}</div>
-      );
-    },
-  },
-  {
-    id: "lessons",
-    header: "Lessons",
-    cell: ({ row }) => {
-      const lessonsCount = row.original.classLessons?.length || 0;
-      return (
-        <div className="text-muted-foreground text-center">
-          {lessonsCount > 0 ? `${lessonsCount} lesson(s)` : "No lessons"}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>View Details</DropdownMenuItem>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
+  //   {
+  //     accessorKey: "isActive",
+  //     header: "Status",
+  //     cell: ({ row }) => (
+  //       <Badge variant={row.original.isActive ? "default" : "secondary"}>
+  //         {row.original.isActive ? "Active" : "Inactive"}
+  //       </Badge>
+  //     ),
+  //   },
+  //   {
+  //     accessorKey: "createdAt",
+  //     header: "Created",
+  //     cell: ({ row }) => {
+  //       const date = new Date(row.original.createdAt);
+  //       return (
+  //         <div className="text-muted-foreground">{date.toLocaleDateString()}</div>
+  //       );
+  //     },
+  //   },
+  //   {
+  //     id: "lessons",
+  //     header: "Lessons",
+  //     cell: ({ row }) => {
+  //       const lessonsCount = row.original.classLessons?.length || 0;
+  //       return (
+  //         <div className="text-muted-foreground text-center">
+  //           {lessonsCount > 0 ? `${lessonsCount} lesson(s)` : "No lessons"}
+  //         </div>
+  //       );
+  //     },
+  //   },
 ];
+
+// Actions column needs to be created inside the component to access the handlers
+const createActionsColumn = (
+  onDeleteClick: (content: Content) => void
+): ColumnDef<Content> => ({
+  id: "actions",
+  cell: ({ row }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+          size="icon"
+        >
+          <IconDotsVertical />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem>View Details</DropdownMenuItem>
+        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem>Duplicate</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive"
+          onClick={() => onDeleteClick(row.original)}
+        >
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
+});
 
 function DraggableRow({ row }: { row: Row<Content> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -331,7 +342,13 @@ function DraggableRow({ row }: { row: Row<Content> }) {
   );
 }
 
-export function ContentsList({ data: initialData }: { data: Content[] }) {
+export function ContentsList({
+  data: initialData,
+  onRefresh,
+}: {
+  data: Content[];
+  onRefresh?: () => void;
+}) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -347,6 +364,11 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [contentToDelete, setContentToDelete] = React.useState<Content | null>(
+    null
+  );
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -359,9 +381,15 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
     [data]
   );
 
+  // Create columns with delete handler
+  const columnsWithActions = React.useMemo(
+    () => [...columns, createActionsColumn(handleDeleteClick)],
+    []
+  );
+
   const table = useReactTable({
     data,
-    columns,
+    columns: columnsWithActions,
     state: {
       sorting,
       columnVisibility,
@@ -392,6 +420,25 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
         const newIndex = dataIds.indexOf(over.id);
         return arrayMove(data, oldIndex, newIndex);
       });
+    }
+  }
+
+  function handleContentAdded() {
+    // Refresh the data from the server
+    if (onRefresh) {
+      onRefresh();
+    }
+  }
+
+  function handleDeleteClick(content: Content) {
+    setContentToDelete(content);
+    setIsDeleteDialogOpen(true);
+  }
+
+  function handleContentDeleted() {
+    // Refresh the data from the server
+    if (onRefresh) {
+      onRefresh();
     }
   }
 
@@ -471,7 +518,11 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsAddDialogOpen(true)}
+          >
             <IconPlus />
             <span className="hidden lg:inline">Add Content</span>
           </Button>
@@ -519,7 +570,7 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={columns.length}
+                      colSpan={columnsWithActions.length}
                       className="h-24 text-center"
                     >
                       No contents found.
@@ -608,6 +659,19 @@ export function ContentsList({ data: initialData }: { data: Content[] }) {
           </div>
         </div>
       </div>
+
+      <AddContentDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSuccess={handleContentAdded}
+      />
+
+      <DeleteContentDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        content={contentToDelete}
+        onSuccess={handleContentDeleted}
+      />
     </div>
   );
 }
