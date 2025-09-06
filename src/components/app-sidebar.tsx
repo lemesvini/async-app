@@ -6,6 +6,7 @@ import {
   IconBriefcase,
   IconSchool,
   IconBook,
+  IconCreditCard,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -52,6 +53,11 @@ const data = {
       title: "Classes",
       url: "/turmas",
       icon: IconSchool,
+    },
+    {
+      title: "Payments",
+      url: "/payments",
+      icon: IconCreditCard,
     },
   ],
   navContents: [

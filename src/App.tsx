@@ -6,6 +6,7 @@ import { StudentsPage } from "./pages/StudentsPage";
 import { ConsultantsPage } from "./pages/ConsultantsPage";
 import { TurmasPage } from "./pages/TurmasPage";
 import { ContentsPage } from "./pages/ContentsPage";
+import { PaymentsPage } from "./pages/PaymentsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
@@ -53,6 +54,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ContentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payments"
+          element={
+            <ProtectedRoute>
+              <PaymentsPage />
             </ProtectedRoute>
           }
         />

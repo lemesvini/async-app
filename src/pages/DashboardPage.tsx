@@ -1,8 +1,7 @@
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
+// import { RecentActivity } from "@/components/recent-activity";
 import { SectionCards } from "@/components/section-cards";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import data from "@/app/dashboard/data.json";
 
 export function DashboardPage() {
   return (
@@ -11,7 +10,7 @@ export function DashboardPage() {
         <div className="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
           <SectionCards />
           <ChartAreaInteractive />
-          <DataTable data={data} />
+          {/* <RecentActivity /> */}
         </div>
       </div>
     </DashboardLayout>
