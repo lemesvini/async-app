@@ -53,7 +53,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -76,6 +76,7 @@ import {
 import type { Consultant } from "@/app/consultants/api/get-consultants";
 import { CreateConsultantDialog } from "./create-consultant-dialog";
 import { DeleteConsultantDialog } from "./delete-consultant-dialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -140,6 +141,7 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
   const [consultantToDelete, setConsultantToDelete] =
     React.useState<Consultant | null>(null);
   const sortableId = React.useId();
+  const { isAdmin } = useUserRole();
 
   const handleDeleteConsultant = (consultant: Consultant) => {
     setConsultantToDelete(consultant);
@@ -250,10 +252,10 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem>View Details</DropdownMenuItem>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Contact</DropdownMenuItem>
-              <DropdownMenuSeparator />
+              {/* <DropdownMenuItem>View Details</DropdownMenuItem> */}
+              {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
+              {/* <DropdownMenuItem>Contact</DropdownMenuItem> */}
+              {/* <DropdownMenuSeparator /> */}
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => handleDeleteConsultant(row.original)}
@@ -376,14 +378,16 @@ export function ConsultantsList({ data: initialData }: { data: Consultant[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            <IconPlus />
-            <span className="hidden lg:inline">Add Consultant</span>
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCreateDialogOpen(true)}
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Add Consultant</span>
+            </Button>
+          )}
         </div>
       </div>
 

@@ -79,6 +79,7 @@ import { type Turma } from "../api/get-turmas";
 import { ClassDetailsDialog } from "./class-details-dialog";
 import { CreateClassDialog } from "./create-class-dialog";
 import { DeleteClassDialog } from "./delete-class-dialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 // Helper function to get day name
 const getDayName = (dayOfWeek: number): string => {
@@ -288,7 +289,7 @@ const columns: ColumnDef<TurmaWithActions>[] = [
           <DropdownMenuItem onSelect={() => row.original.onViewDetails?.()}>
             View Details
           </DropdownMenuItem>
-          <DropdownMenuItem>Edit Class</DropdownMenuItem>
+          {/* <DropdownMenuItem>Edit Class</DropdownMenuItem> */}
           {/* <DropdownMenuItem>Manage Students</DropdownMenuItem> */}
           {/* <DropdownMenuItem>View Schedule</DropdownMenuItem> */}
           <DropdownMenuSeparator />
@@ -338,6 +339,7 @@ export function TurmasList({
   data: initialData,
   onDataChange,
 }: TurmasListProps) {
+  const { isAdmin } = useUserRole();
   const [data, setData] = React.useState(() => initialData);
   const [selectedTurma, setSelectedTurma] = React.useState<Turma | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -514,14 +516,16 @@ export function TurmasList({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCreateDialogOpen(true)}
-          >
-            <IconPlus />
-            <span className="hidden lg:inline">Add Class</span>
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Add Class</span>
+            </Button>
+          )}
         </div>
       </div>
 

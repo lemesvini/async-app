@@ -53,7 +53,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -76,6 +76,7 @@ import {
 import type { Student } from "@/app/students/api/get-students";
 import { CreateStudentDialog } from "./create-student-dialog";
 import { DeleteStudentDialog } from "./delete-student-dialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -141,6 +142,7 @@ export function StudentsList({ data: initialData }: { data: Student[] }) {
     null
   );
   const sortableId = React.useId();
+  const { isAdmin } = useUserRole();
 
   const handleDeleteStudent = (student: Student) => {
     setStudentToDelete(student);
@@ -251,10 +253,10 @@ export function StudentsList({ data: initialData }: { data: Student[] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem>View Details</DropdownMenuItem>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Contact</DropdownMenuItem>
-              <DropdownMenuSeparator />
+              {/* <DropdownMenuItem>View Details</DropdownMenuItem> */}
+              {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
+              {/* <DropdownMenuItem>Contact</DropdownMenuItem> */}
+              {/* <DropdownMenuSeparator /> */}
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => handleDeleteStudent(row.original)}
@@ -377,14 +379,16 @@ export function StudentsList({ data: initialData }: { data: Student[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            <IconPlus />
-            <span className="hidden lg:inline">Add Student</span>
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCreateDialogOpen(true)}
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Add Student</span>
+            </Button>
+          )}
         </div>
       </div>
 

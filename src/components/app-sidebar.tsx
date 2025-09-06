@@ -25,11 +25,23 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 
+// Define user roles as a type
+type UserRole = "ADMIN" | "CONSULTANT" | "STUDENT";
+
+interface UserData {
+  name: string;
+  email: string;
+  avatar?: string;
+  fullName?: string;
+  role?: UserRole;
+}
+
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
+    role: "STUDENT" as UserRole, // Default role
   },
   navMain: [
     {
@@ -155,16 +167,66 @@ export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
-  user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-    fullName?: string;
-  };
+  user?: UserData;
 }) {
   // Use passed user or fallback to default data
   const userData = user || data.user;
   const location = useLocation();
+
+  // Filter navigation items based on user role
+  const getFilteredNavItems = () => {
+    const userRole = (userData.role as UserRole) || "STUDENT";
+
+    // Role-based filtering for management items
+    switch (userRole) {
+      case "ADMIN":
+        // Admin gets full access to all management features
+        return data.navManagement;
+
+      case "CONSULTANT":
+        // Consultant gets access to students and classes only
+        return data.navManagement.filter((item) =>
+          ["Students", "Classes"].includes(item.title)
+        );
+
+      case "STUDENT":
+      default:
+        // Students get no management items
+        return [];
+    }
+  };
+
+  // Show contents based on role - all roles can access contents
+  const shouldShowContents = () => {
+    const userRole = (userData.role as UserRole) || "STUDENT";
+    // All authenticated users can access contents
+    return (["ADMIN", "CONSULTANT", "STUDENT"] as UserRole[]).includes(
+      userRole
+    );
+  };
+
+  // Show dashboard based on role - only admins can see dashboard
+  const shouldShowDashboard = () => {
+    const userRole = (userData.role as UserRole) || "STUDENT";
+    return userRole === "ADMIN";
+  };
+
+  // Get the default home URL based on user role
+  const getDefaultHomeUrl = () => {
+    const userRole = (userData.role as UserRole) || "STUDENT";
+    switch (userRole) {
+      case "ADMIN":
+        return "/dashboard";
+      case "CONSULTANT":
+        return "/alunos";
+      case "STUDENT":
+        return "/contents";
+      default:
+        return "/contents";
+    }
+  };
+
+  const filteredManagementItems = getFilteredNavItems();
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -175,49 +237,59 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foregroundß"
             >
-              <Link to="/dashboard">
+              <Link to={getDefaultHomeUrl()}>
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold tracking-wid">
-                  Welcome,{" "}
-                  {(() => {
-                    const displayName =
-                      "fullName" in userData
-                        ? userData.fullName || userData.name
-                        : userData.name;
-                    return displayName.split(" ")[0];
-                  })()}
-                  {" :)"}
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold tracking-wid">
+                    Welcome,{" "}
+                    {(() => {
+                      const displayName =
+                        "fullName" in userData
+                          ? userData.fullName || userData.name
+                          : userData.name;
+                      return displayName.split(" ")[0];
+                    })()}
+                    {" :)"}
+                  </span>
+                  {/* {userData.role && (
+                    <span className="text-xs text-muted-foreground capitalize">
+                      {userData.role.toLowerCase()}
+                    </span>
+                  )} */}
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <br />
+        {shouldShowDashboard() && <NavMain items={data.navMain} />}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.navManagement.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.url}
-                  >
-                    <Link to={item.url}>
-                      {item.icon && <item.icon />}
-                      <span className="text-lg">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {filteredManagementItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Management</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredManagementItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === item.url}
+                    >
+                      <Link to={item.url}>
+                        {item.icon && <item.icon />}
+                        <span className="text-lg">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
-        <NavMain items={data.navContents} />
+        {shouldShowContents() && <NavMain items={data.navContents} />}
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>

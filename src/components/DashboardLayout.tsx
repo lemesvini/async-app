@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { apiClient } from "@/lib/api";
+
+// Define user roles as a type
+type UserRole = "ADMIN" | "CONSULTANT" | "STUDENT";
 
 export function DashboardLayout({
   children,
@@ -13,6 +16,7 @@ export function DashboardLayout({
   title?: string;
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,11 +26,31 @@ export function DashboardLayout({
     if (storedUser) {
       setUser(storedUser);
       setIsLoading(false);
+
+      // Role-based redirection logic
+      const userRole = (storedUser.role as UserRole) || "STUDENT";
+      const currentPath = location.pathname;
+
+      // If user is on dashboard path, redirect based on role
+      if (currentPath === "/dashboard") {
+        switch (userRole) {
+          case "CONSULTANT":
+            navigate("/alunos", { replace: true });
+            return;
+          case "STUDENT":
+            navigate("/contents", { replace: true });
+            return;
+          case "ADMIN":
+          default:
+            // Admin stays on dashboard
+            break;
+        }
+      }
     } else {
       // If no user data, redirect to login
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   if (isLoading || !user) {
     return (

@@ -85,6 +85,7 @@ import {
 import type { Content } from "@/app/contents/api/get-contents";
 import { AddContentDialog } from "./add-content-dialog";
 import { DeleteContentDialog } from "./delete-content-dialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -349,6 +350,7 @@ export function ContentsList({
   data: Content[];
   onRefresh?: () => void;
 }) {
+  const { isAdmin } = useUserRole();
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -518,14 +520,16 @@ export function ContentsList({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsAddDialogOpen(true)}
-          >
-            <IconPlus />
-            <span className="hidden lg:inline">Add Content</span>
-          </Button>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAddDialogOpen(true)}
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Add Content</span>
+            </Button>
+          )}
         </div>
       </div>
 
