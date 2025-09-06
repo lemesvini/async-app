@@ -56,7 +56,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  //   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -302,10 +302,10 @@ const createActionsColumn = (
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
-        <DropdownMenuItem>View Details</DropdownMenuItem>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuItem>View Details</DropdownMenuItem> */}
+        {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
+        {/* <DropdownMenuItem>Duplicate</DropdownMenuItem> */}
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={() => onDeleteClick(row.original)}

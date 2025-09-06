@@ -165,8 +165,9 @@ export function AddContentDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
+          <div className="space-y-4">
+            {/* Title Field */}
+            <div>
               <Label htmlFor="title">Title *</Label>
               <Input
                 id="title"
@@ -180,145 +181,165 @@ export function AddContentDialog({
               )}
             </div>
 
-            <div className="md:col-span-2">
+            {/* Description Field */}
+            <div>
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 placeholder="Brief description of the content..."
                 value={formData.description}
                 onChange={(e) => updateField("description", e.target.value)}
-                className="resize-none"
+                className="resize-none min-h-[80px]"
               />
               <p className="text-sm text-muted-foreground mt-1">
                 Optional description to help students understand the content.
               </p>
             </div>
 
-            <div>
-              <Label htmlFor="module">Module *</Label>
-              <Select
-                value={formData.module}
-                onValueChange={(value) => updateField("module", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a module" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="A1">A1</SelectItem>
-                  <SelectItem value="A2">A2</SelectItem>
-                  <SelectItem value="B1">B1</SelectItem>
-                  <SelectItem value="B2">B2</SelectItem>
-                  <SelectItem value="C1">C1</SelectItem>
-                  <SelectItem value="C2">C2</SelectItem>
-                  <SelectItem value="CONVERSATION_A1">
-                    CONVERSATION A1
-                  </SelectItem>
-                  <SelectItem value="CONVERSATION_A2">
-                    CONVERSATION A2
-                  </SelectItem>
-                  <SelectItem value="CONVERSATION_B1">
-                    CONVERSATION B1
-                  </SelectItem>
-                  <SelectItem value="CONVERSATION_B2">
-                    CONVERSATION B2
-                  </SelectItem>
-                  <SelectItem value="CONVERSATION_C1">
-                    CONVERSATION C1
-                  </SelectItem>
-                  <SelectItem value="CONVERSATION_C2">
-                    CONVERSATION C2
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Module and Order Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="module">Module *</Label>
+                <Select
+                  value={formData.module}
+                  onValueChange={(value) => updateField("module", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a module" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="A1">A1</SelectItem>
+                    <SelectItem value="A2">A2</SelectItem>
+                    <SelectItem value="B1">B1</SelectItem>
+                    <SelectItem value="B2">B2</SelectItem>
+                    <SelectItem value="C1">C1</SelectItem>
+                    <SelectItem value="C2">C2</SelectItem>
+                    <SelectItem value="CONVERSATION_A1">
+                      CONVERSATION A1
+                    </SelectItem>
+                    <SelectItem value="CONVERSATION_A2">
+                      CONVERSATION A2
+                    </SelectItem>
+                    <SelectItem value="CONVERSATION_B1">
+                      CONVERSATION B1
+                    </SelectItem>
+                    <SelectItem value="CONVERSATION_B2">
+                      CONVERSATION B2
+                    </SelectItem>
+                    <SelectItem value="CONVERSATION_C1">
+                      CONVERSATION C1
+                    </SelectItem>
+                    <SelectItem value="CONVERSATION_C2">
+                      CONVERSATION C2
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div>
-              <Label htmlFor="order">Order *</Label>
-              <Input
-                id="order"
-                type="number"
-                min="1"
-                value={formData.order}
-                onChange={(e) =>
-                  updateField("order", parseInt(e.target.value) || 1)
-                }
-                className={errors.order ? "border-red-500" : ""}
-              />
-              {errors.order && (
-                <p className="text-sm text-red-500 mt-1">{errors.order}</p>
-              )}
-              <p className="text-sm text-muted-foreground mt-1">
-                Order within the module (must be unique).
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="presentationUrl">Presentation URL</Label>
-              <Input
-                id="presentationUrl"
-                placeholder="https://example.com/presentation.pptx"
-                value={formData.presentationUrl}
-                onChange={(e) => updateField("presentationUrl", e.target.value)}
-                className={errors.presentationUrl ? "border-red-500" : ""}
-              />
-              {errors.presentationUrl && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.presentationUrl}
+              <div>
+                <Label htmlFor="order">Order *</Label>
+                <Input
+                  id="order"
+                  type="number"
+                  min="1"
+                  value={formData.order}
+                  onChange={(e) =>
+                    updateField("order", parseInt(e.target.value) || 1)
+                  }
+                  className={errors.order ? "border-red-500" : ""}
+                />
+                {errors.order && (
+                  <p className="text-sm text-red-500 mt-1">{errors.order}</p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
+                  Order within the module (must be unique).
                 </p>
-              )}
-              <p className="text-sm text-muted-foreground mt-1">
-                Optional link to presentation slides.
-              </p>
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="studentsPdfUrl">Student PDF URL</Label>
-              <Input
-                id="studentsPdfUrl"
-                placeholder="https://example.com/student-materials.pdf"
-                value={formData.studentsPdfUrl}
-                onChange={(e) => updateField("studentsPdfUrl", e.target.value)}
-                className={errors.studentsPdfUrl ? "border-red-500" : ""}
-              />
-              {errors.studentsPdfUrl && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.studentsPdfUrl}
+            {/* URL Fields */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="presentationUrl">Presentation URL</Label>
+                <Input
+                  id="presentationUrl"
+                  placeholder="https://example.com/presentation.pptx"
+                  value={formData.presentationUrl}
+                  onChange={(e) =>
+                    updateField("presentationUrl", e.target.value)
+                  }
+                  className={errors.presentationUrl ? "border-red-500" : ""}
+                />
+                {errors.presentationUrl && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.presentationUrl}
+                  </p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
+                  Optional link to presentation slides.
                 </p>
-              )}
-              <p className="text-sm text-muted-foreground mt-1">
-                Optional link to student materials.
-              </p>
-            </div>
+              </div>
 
-            <div>
-              <Label htmlFor="homeworkUrl">Homework URL</Label>
-              <Input
-                id="homeworkUrl"
-                placeholder="https://example.com/homework.pdf"
-                value={formData.homeworkUrl}
-                onChange={(e) => updateField("homeworkUrl", e.target.value)}
-                className={errors.homeworkUrl ? "border-red-500" : ""}
-              />
-              {errors.homeworkUrl && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.homeworkUrl}
+              <div>
+                <Label htmlFor="studentsPdfUrl">Student PDF URL</Label>
+                <Input
+                  id="studentsPdfUrl"
+                  placeholder="https://example.com/student-materials.pdf"
+                  value={formData.studentsPdfUrl}
+                  onChange={(e) =>
+                    updateField("studentsPdfUrl", e.target.value)
+                  }
+                  className={errors.studentsPdfUrl ? "border-red-500" : ""}
+                />
+                {errors.studentsPdfUrl && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.studentsPdfUrl}
+                  </p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
+                  Optional link to student materials.
                 </p>
-              )}
-              <p className="text-sm text-muted-foreground mt-1">
-                Optional link to homework assignments.
-              </p>
+              </div>
+
+              <div>
+                <Label htmlFor="homeworkUrl">Homework URL</Label>
+                <Input
+                  id="homeworkUrl"
+                  placeholder="https://example.com/homework.pdf"
+                  value={formData.homeworkUrl}
+                  onChange={(e) => updateField("homeworkUrl", e.target.value)}
+                  className={errors.homeworkUrl ? "border-red-500" : ""}
+                />
+                {errors.homeworkUrl && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.homeworkUrl}
+                  </p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
+                  Optional link to homework assignments.
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* Active Checkbox */}
+            <div className="flex items-start space-x-2 pt-2">
               <Checkbox
                 id="isActive"
                 checked={formData.isActive}
                 onCheckedChange={(checked) => updateField("isActive", checked)}
+                className="mt-0.5"
               />
-              <Label htmlFor="isActive">Active</Label>
-              <p className="text-sm text-muted-foreground">
-                Content will be visible to students when active.
-              </p>
+              <div className="grid gap-1.5 leading-none">
+                <Label
+                  htmlFor="isActive"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Active
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Content will be visible to students when active.
+                </p>
+              </div>
             </div>
           </div>
 
