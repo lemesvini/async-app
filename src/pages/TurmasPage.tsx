@@ -8,23 +8,27 @@ export function TurmasPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTurmas = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await getTurmas(1, 50);
-        setTurmas(response.classes);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        console.error("Failed to fetch turmas:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchTurmas = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getTurmas(1, 50);
+      setTurmas(response.classes);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Failed to fetch turmas:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTurmas();
   }, []);
+
+  const handleDataRefresh = () => {
+    fetchTurmas();
+  };
 
   if (loading) {
     return (
@@ -58,7 +62,7 @@ export function TurmasPage() {
     <DashboardLayout title="Classes">
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
-          <TurmasList data={turmas} />
+          <TurmasList data={turmas} onDataChange={handleDataRefresh} />
         </div>
       </div>
     </DashboardLayout>

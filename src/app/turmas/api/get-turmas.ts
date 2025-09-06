@@ -220,12 +220,26 @@ export async function enrollStudentInTurma(
     );
 
     if (!response.ok) {
-      throw new Error("Failed to enroll student");
+      const errorData = await response.text();
+      let errorMessage = `Failed to enroll student (${response.status})`;
+
+      try {
+        const errorJson = JSON.parse(errorData);
+        if (errorJson.message) {
+          errorMessage = errorJson.message;
+        }
+      } catch {
+        // If parsing fails, use the text response
+        if (errorData) {
+          errorMessage = errorData;
+        }
+      }
+
+      throw new Error(errorMessage);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error enrolling student:", error);
     throw error;
   }
 }

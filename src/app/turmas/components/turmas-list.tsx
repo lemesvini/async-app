@@ -76,6 +76,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { type Turma } from "../api/get-turmas";
+import { ClassDetailsDialog } from "./class-details-dialog";
 
 // Helper function to get day name
 const getDayName = (dayOfWeek: number): string => {
@@ -117,7 +118,12 @@ function DragHandle({ id }: { id: string }) {
   );
 }
 
-const columns: ColumnDef<Turma>[] = [
+// Extended type for table data with action handlers
+type TurmaWithActions = Turma & {
+  onViewDetails: () => void;
+};
+
+const columns: ColumnDef<TurmaWithActions>[] = [
   {
     id: "drag",
     header: () => null,
@@ -263,7 +269,7 @@ const columns: ColumnDef<Turma>[] = [
   },
   {
     id: "actions",
-    cell: () => (
+    cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -276,7 +282,9 @@ const columns: ColumnDef<Turma>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem>View Details</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => row.original.onViewDetails?.()}>
+            View Details
+          </DropdownMenuItem>
           <DropdownMenuItem>Edit Class</DropdownMenuItem>
           <DropdownMenuItem>Manage Students</DropdownMenuItem>
           <DropdownMenuItem>View Schedule</DropdownMenuItem>
@@ -317,10 +325,16 @@ function DraggableRow({ row }: { row: Row<Turma> }) {
 
 interface TurmasListProps {
   data: Turma[];
+  onDataChange?: () => void;
 }
 
-export function TurmasList({ data: initialData }: TurmasListProps) {
+export function TurmasList({
+  data: initialData,
+  onDataChange,
+}: TurmasListProps) {
   const [data, setData] = React.useState(() => initialData);
+  const [selectedTurma, setSelectedTurma] = React.useState<Turma | null>(null);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -332,6 +346,20 @@ export function TurmasList({ data: initialData }: TurmasListProps) {
     pageIndex: 0,
     pageSize: 10,
   });
+
+  // Create data with action handlers
+  const dataWithActions: TurmaWithActions[] = React.useMemo(
+    () =>
+      data.map((turma) => ({
+        ...turma,
+        onViewDetails: () => {
+          setSelectedTurma(turma);
+          setDialogOpen(true);
+        },
+      })),
+    [data]
+  );
+
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -340,12 +368,12 @@ export function TurmasList({ data: initialData }: TurmasListProps) {
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data]
+    () => dataWithActions?.map(({ id }) => id) || [],
+    [dataWithActions]
   );
 
   const table = useReactTable({
-    data,
+    data: dataWithActions,
     columns,
     state: {
       sorting,
@@ -610,6 +638,13 @@ export function TurmasList({ data: initialData }: TurmasListProps) {
           </div>
         </div>
       </div>
+
+      <ClassDetailsDialog
+        turma={selectedTurma}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onEnrollmentSuccess={onDataChange}
+      />
     </div>
   );
 }

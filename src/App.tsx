@@ -6,6 +6,7 @@ import { StudentsPage } from "./pages/StudentsPage";
 import { ConsultantsPage } from "./pages/ConsultantsPage";
 import { TurmasPage } from "./pages/TurmasPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           }
         />
       </Routes>
+      <Toaster />
     </Router>
   );
 }
