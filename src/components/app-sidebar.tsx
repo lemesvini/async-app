@@ -5,6 +5,7 @@ import {
   IconUsers,
   IconBriefcase,
   IconSchool,
+  IconBook,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -18,6 +19,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
 
 const data = {
@@ -32,6 +36,8 @@ const data = {
       url: "/dashboard",
       icon: IconDashboard,
     },
+  ],
+  navManagement: [
     {
       title: "Students",
       url: "/alunos",
@@ -43,9 +49,16 @@ const data = {
       icon: IconBriefcase,
     },
     {
-      title: "Turmas",
+      title: "Classes",
       url: "/turmas",
       icon: IconSchool,
+    },
+  ],
+  navContents: [
+    {
+      title: "Contents",
+      url: "/contents",
+      icon: IconBook,
     },
   ],
   // navClouds: [
@@ -165,6 +178,26 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.navManagement.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link to={item.url}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <NavMain items={data.navContents} />
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
