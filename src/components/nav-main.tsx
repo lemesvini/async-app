@@ -48,7 +48,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
             className="cursor-pointer"
           >
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span className="text-lg">{item.title}</span>
             <ChevronRight
               className={`ml-auto h-4 w-4 transition-transform duration-200 ${
                 isExpanded ? "rotate-90" : ""
@@ -77,7 +77,9 @@ export function NavMain({ items }: { items: NavItem[] }) {
                           >
                             <Link to={nestedItem.url || "#"}>
                               {nestedItem.icon && <nestedItem.icon />}
-                              <span>{nestedItem.title}</span>
+                              <span className="text-lg">
+                                {nestedItem.title}
+                              </span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -96,7 +98,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                       >
                         <Link to={subItem.url || "#"}>
                           {subItem.icon && <subItem.icon />}
-                          <span>{subItem.title}</span>
+                          <span className="text-lg">{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
@@ -114,7 +116,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
         <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
           <Link to={item.url || "#"}>
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span className="text-lg">{item.title}</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

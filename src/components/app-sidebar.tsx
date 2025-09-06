@@ -188,7 +188,7 @@ export function AppSidebar({
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>
                       {item.icon && <item.icon />}
-                      <span>{item.title}</span>
+                      <span className="text-lg">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
