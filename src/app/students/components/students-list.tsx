@@ -123,7 +123,13 @@ function DraggableRow({ row }: { row: Row<Student> }) {
   );
 }
 
-export function StudentsList({ data: initialData }: { data: Student[] }) {
+export function StudentsList({ 
+  data: initialData, 
+  onDataChange 
+}: { 
+  data: Student[]; 
+  onDataChange?: () => Promise<void> | void;
+}) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -320,14 +326,16 @@ export function StudentsList({ data: initialData }: { data: Student[] }) {
 
   const handleStudentCreated = () => {
     // Trigger a refresh of the students data
-    // This could be done by calling a refresh function passed from the parent
-    // or by refetching the data directly
-    window.location.reload(); // Simple solution for now
+    if (onDataChange) {
+      onDataChange();
+    }
   };
 
   const handleStudentDeleted = () => {
     // Trigger a refresh of the students data
-    window.location.reload(); // Simple solution for now
+    if (onDataChange) {
+      onDataChange();
+    }
   };
 
   return (
