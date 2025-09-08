@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,41 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
+
+  // Theme detection logic
+  useEffect(() => {
+    const checkTheme = () => {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const shouldBeDark = savedTheme ? savedTheme === "dark" : prefersDark;
+      setIsDark(shouldBeDark);
+    };
+
+    checkTheme();
+
+    // Listen for storage changes (theme changes from other components)
+    window.addEventListener("storage", checkTheme);
+
+    // Also check if the dark class is present on document element
+    const observer = new MutationObserver(() => {
+      const hasDarkClass = document.documentElement.classList.contains("dark");
+      setIsDark(hasDarkClass);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      window.removeEventListener("storage", checkTheme);
+      observer.disconnect();
+    };
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,14 +77,31 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
+      <Card
+        className={cn(
+          "overflow-hidden p-0 shadow-none",
+          isDark ? "border-0" : "border border-gray-300"
+        )}
+      >
         <CardContent className="grid p-0 md:grid-cols-1">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+          <form className="p-4 md:p-6" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              {/* Logo Section inside card */}
+              <div className="flex flex-col w-full items-center justify-center mb-2 p-10">
+                <img
+                  src={
+                    isDark
+                      ? "/async-text-logo-white.svg"
+                      : "/async-text-logo-dark.svg"
+                  }
+                  alt="Async Logo"
+                  className="w-[calc(100%-80px)] h-auto max-w-none object-contain"
+                />
+              </div>
+              <hr />
+              <div className="flex flex-col items-center text-center my-4">
                 <p className="text-muted-foreground text-balance">
-                  Login to your Async App account
+                  Login to your Async App account:
                 </p>
               </div>
 
@@ -60,7 +111,7 @@ export function LoginForm({
                 </div>
               )}
 
-              <div className="grid gap-3">
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -71,7 +122,7 @@ export function LoginForm({
                   required
                 />
               </div>
-              <div className="grid gap-3">
+              <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <a
@@ -90,6 +141,7 @@ export function LoginForm({
                   required
                 />
               </div>
+              <br />
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Login"}
               </Button>
@@ -154,16 +206,9 @@ export function LoginForm({
               </div> */}
             </div>
           </form>
-          <div className="bg-muted relative hidden md:block">
-            <img
-              src="/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground text-center text-xs text-balance">
+      {/* <div className="text-muted-foreground text-center text-xs text-balance">
         By clicking continue, you agree to our{" "}
         <a
           href="#"
@@ -181,7 +226,7 @@ export function LoginForm({
           Privacy Policy
         </a>
         .
-      </div>
+      </div> */}
     </div>
   );
 }
