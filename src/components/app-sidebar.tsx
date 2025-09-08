@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   IconDashboard,
-  IconInnerShadowTop,
   IconUsers,
   IconBriefcase,
   IconSchool,
@@ -173,6 +172,42 @@ export function AppSidebar({
   const userData = user || data.user;
   const location = useLocation();
 
+  // Theme detection state
+  const [isDark, setIsDark] = React.useState(false);
+
+  // Check theme on component mount and when localStorage changes
+  React.useEffect(() => {
+    const checkTheme = () => {
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const shouldBeDark = savedTheme ? savedTheme === "dark" : prefersDark;
+      setIsDark(shouldBeDark);
+    };
+
+    checkTheme();
+
+    // Listen for storage changes (theme changes from other components)
+    window.addEventListener("storage", checkTheme);
+
+    // Also check if the dark class is present on document element
+    const observer = new MutationObserver(() => {
+      const hasDarkClass = document.documentElement.classList.contains("dark");
+      setIsDark(hasDarkClass);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      window.removeEventListener("storage", checkTheme);
+      observer.disconnect();
+    };
+  }, []);
+
   // Filter navigation items based on user role
   const getFilteredNavItems = () => {
     const userRole = (userData.role as UserRole) || "STUDENT";
@@ -238,7 +273,13 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foregroundß"
             >
               <Link to={getDefaultHomeUrl()}>
-                <IconInnerShadowTop className="!size-5" />
+                <img
+                  src={
+                    isDark ? "/no-bg-async-white.svg" : "/no-bg-async-dark.svg"
+                  }
+                  alt="Async Logo"
+                  className="!size-8"
+                />
                 <div className="flex flex-col">
                   <span className="text-base font-semibold tracking-wid">
                     Welcome,{" "}
