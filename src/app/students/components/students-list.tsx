@@ -123,11 +123,11 @@ function DraggableRow({ row }: { row: Row<Student> }) {
   );
 }
 
-export function StudentsList({ 
-  data: initialData, 
-  onDataChange 
-}: { 
-  data: Student[]; 
+export function StudentsList({
+  data: initialData,
+  onDataChange,
+}: {
+  data: Student[];
   onDataChange?: () => Promise<void> | void;
 }) {
   const [data, setData] = React.useState(() => initialData);

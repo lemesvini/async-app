@@ -83,7 +83,21 @@ export function LoginForm({
           isDark ? "border-0" : "border border-gray-300"
         )}
       >
-        <CardContent className="grid p-0 md:grid-cols-1">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          {/* Pattern Image Column */}
+          <div className="hidden md:flex relative overflow-hidden">
+            <img
+              src={
+                isDark
+                  ? "/infinite_pattern_light.png"
+                  : "/infinite_pattern_dark.png"
+              }
+              alt="Infinite Pattern"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Login Form Column */}
           <form className="p-4 md:p-6" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
               {/* Logo Section inside card */}

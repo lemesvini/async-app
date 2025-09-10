@@ -15,9 +15,7 @@ export function StudentsPage() {
       setStudents(response.users);
       setError(null);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch students"
-      );
+      setError(err instanceof Error ? err.message : "Failed to fetch students");
       console.error("Error fetching students:", err);
     } finally {
       setLoading(false);
